@@ -40,7 +40,7 @@ def extractCover(tmp_file_name, original_file_extension):
     if use_comic_meta:
         archive = ComicArchive(tmp_file_name)
         cover_data = None
-        for index, name in enumerate(archive.getPageNameList()):
+        for index, name in enumerate(archive.getPageNameList(sort_list=True)):
             ext = os.path.splitext(name)
             if len(ext) > 1:
                 extension = ext[1].lower()
@@ -50,7 +50,7 @@ def extractCover(tmp_file_name, original_file_extension):
     else:
         if original_file_extension.upper() == '.CBZ':
             cf = zipfile.ZipFile(tmp_file_name)
-            for name in cf.namelist():
+            for name in sorted(cf.namelist()):
                 ext = os.path.splitext(name)
                 if len(ext) > 1:
                     extension = ext[1].lower()
@@ -59,7 +59,7 @@ def extractCover(tmp_file_name, original_file_extension):
                         break
         elif original_file_extension.upper() == '.CBT':
             cf = tarfile.TarFile(tmp_file_name)
-            for name in cf.getnames():
+            for name in sorted(cf.getnames()):
                 ext = os.path.splitext(name)
                 if len(ext) > 1:
                     extension = ext[1].lower()
