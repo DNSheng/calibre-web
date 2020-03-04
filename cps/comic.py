@@ -18,6 +18,7 @@
 
 from __future__ import division, print_function, unicode_literals
 import os
+import re
 
 from . import logger, isoLanguages
 from .constants import BookMeta
@@ -113,14 +114,49 @@ def get_comic_info(tmp_file_path, original_file_name, original_file_extension):
                 languages=loadedMetadata.language)
     else:
 
+        info_dict = get_komidl_info(tmp_file_path, original_file_extension)
+
         return BookMeta(
             file_path=tmp_file_path,
             extension=original_file_extension,
             title=original_file_name,
-            author=u'Unknown',
+            author=info_dict.get('CREDIT', u'UNKNOWN'),
             cover=extractCover(tmp_file_path, original_file_extension),
-            description="",
-            tags="",
-            series="",
+            description=info_dict.get('DESC', ""),
+            tags=info_dict.get('TAGS', ""),
+            series=info_dict.get('SERIES', ""),
             series_id="",
-            languages="")
+            languages=info_dict.get('LANGUAGES', ""))
+
+
+def get_komidl_info(tmp_file_name, original_file_extension):
+    """Return a dictionary of parsed values from KomiDL tags"""
+    info_str = get_komidl_info_str(tmp_file_name, original_file_extension)
+    return parse_komidl_info(info_str)
+
+
+def parse_komidl_info(info_str):
+    """Parse the KomiDL tags from the string and return a dict"""
+    if not info_str:
+        return {}
+    lines = re.split(r'\\n', info_str)
+    # Each key-val may split into >2 fields if a ':' char exists in val
+    split_key_vals = (list(line.split(':')) for line in lines)
+    # Join with ':' for lists with >2 fields
+    key_vals = ((token[0], ':'.join(token[1:])) for token in split_key_vals)
+    return {key: val for key, val in key_vals}
+
+
+def get_komidl_info_str(tmp_file_name, original_file_extension):
+    """Return the raw string data from the KomiDL tag file"""
+    if original_file_extension.upper() == '.CBZ':
+            cf = zipfile.ZipFile(tmp_file_name)
+            filenames = list(sorted(cf.namelist()))
+            if 'info.txt' == os.path.split(filenames[-1])[1]:
+                    return str(cf.read(filenames[-1]))
+    elif original_file_extension.upper() == '.CBT':
+            cf = tarfile.TarFile(tmp_file_name)
+            filenames = list(sorted(cf.getnames()))
+            if 'info.txt' == os.path.split(filenames[-1])[1]:
+                    return str(cf.extractfile(filenames[-1]).read())
+    return None
