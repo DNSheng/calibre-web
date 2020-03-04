@@ -119,7 +119,7 @@ def get_comic_info(tmp_file_path, original_file_name, original_file_extension):
         return BookMeta(
             file_path=tmp_file_path,
             extension=original_file_extension,
-            title=original_file_name,
+            title=info_dict.get('TITLE', original_file_name),
             author=info_dict.get('CREDIT', u'UNKNOWN'),
             cover=extractCover(tmp_file_path, original_file_extension),
             description=info_dict.get('DESC', ""),
