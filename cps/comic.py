@@ -139,12 +139,12 @@ def parse_komidl_info(info_str):
     """Parse the KomiDL tags from the string and return a dict"""
     if not info_str:
         return {}
-    lines = re.split(r'\\n', info_str)
+    lines = info_str.splitlines()
     # Each key-val may split into >2 fields if a ':' char exists in val
-    split_key_vals = (list(line.split(':')) for line in lines)
+    # Ex. ['URL', 'http', '//...']
+    key_vals = (list(line.split(':')) for line in lines)
     # Join with ':' for lists with >2 fields
-    key_vals = ((token[0], ':'.join(token[1:])) for token in split_key_vals)
-    return {key: val for key, val in key_vals}
+    return {token[0]: ':'.join(token[1:]) for token in key_vals}
 
 
 def get_komidl_info_str(tmp_file_name, original_file_extension):
@@ -153,10 +153,12 @@ def get_komidl_info_str(tmp_file_name, original_file_extension):
             cf = zipfile.ZipFile(tmp_file_name)
             filenames = list(sorted(cf.namelist()))
             if 'info.txt' == os.path.split(filenames[-1])[1]:
-                    return str(cf.read(filenames[-1]))
+                    info_str = cf.read(filenames[-1])
+                    return info_str.decode('utf-8')
     elif original_file_extension.upper() == '.CBT':
             cf = tarfile.TarFile(tmp_file_name)
             filenames = list(sorted(cf.getnames()))
             if 'info.txt' == os.path.split(filenames[-1])[1]:
-                    return str(cf.extractfile(filenames[-1]).read())
+                    info_str = cf.extractfile(filenames[-1]).read()
+                    return info_str.decode('utf-8')
     return None
