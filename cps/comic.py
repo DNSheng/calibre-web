@@ -45,28 +45,29 @@ def extractCover(tmp_file_name, original_file_extension):
             ext = os.path.splitext(name)
             if len(ext) > 1:
                 extension = ext[1].lower()
-                if extension == '.jpg' or extension == '.jpeg':
+                if extension in {'.jpg', '.jpeg', '.png'}:
                     cover_data = archive.getPage(index)
                     break
     else:
-        if original_file_extension.upper() == '.CBZ':
+        if original_file_extension.upper() in {'.CBZ', '.ZIP'}:
             cf = zipfile.ZipFile(tmp_file_name)
             for name in sorted(cf.namelist()):
                 ext = os.path.splitext(name)
                 if len(ext) > 1:
                     extension = ext[1].lower()
-                    if extension == '.jpg' or extension == '.jpeg':
+                    if extension in {'.jpg', '.jpeg', '.png'}:
                         cover_data = cf.read(name)
                         break
-        elif original_file_extension.upper() == '.CBT':
+        elif original_file_extension.upper() in {'.CBT', '.TAR'}:
             cf = tarfile.TarFile(tmp_file_name)
             for name in sorted(cf.getnames()):
                 ext = os.path.splitext(name)
                 if len(ext) > 1:
                     extension = ext[1].lower()
-                    if extension == '.jpg' or extension == '.jpeg':
+                    if extension in {'.jpg', '.jpeg', '.png'}:
                         cover_data = cf.extractfile(name).read()
                         break
+
     prefix = os.path.dirname(tmp_file_name)
     if cover_data:
         tmp_cover_name = prefix + '/cover' + extension
