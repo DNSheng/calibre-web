@@ -45,7 +45,7 @@ def extractCover(tmp_file_name, original_file_extension):
             ext = os.path.splitext(name)
             if len(ext) > 1:
                 extension = ext[1].lower()
-                if extension == '.jpg' or extension == '.jpeg':
+                if extension in {'.jpg', '.jpeg', '.png'}:
                     cover_data = archive.getPage(index)
                     break
     else:
@@ -55,7 +55,7 @@ def extractCover(tmp_file_name, original_file_extension):
                 ext = os.path.splitext(name)
                 if len(ext) > 1:
                     extension = ext[1].lower()
-                    if extension == '.jpg' or extension == '.jpeg':
+                    if extension in {'.jpg', '.jpeg', '.png'}:
                         cover_data = cf.read(name)
                         break
         elif original_file_extension.upper() == '.CBT':
@@ -64,7 +64,7 @@ def extractCover(tmp_file_name, original_file_extension):
                 ext = os.path.splitext(name)
                 if len(ext) > 1:
                     extension = ext[1].lower()
-                    if extension == '.jpg' or extension == '.jpeg':
+                    if extension in {'.jpg', '.jpeg', '.png'}:
                         cover_data = cf.extractfile(name).read()
                         break
     prefix = os.path.dirname(tmp_file_name)

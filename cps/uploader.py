@@ -85,6 +85,13 @@ def process(tmp_file_path, original_file_name, original_file_extension):
             meta = epub.get_epub_info(tmp_file_path, original_file_name, original_file_extension)
         if ".FB2" == original_file_extension.upper() and use_fb2_meta is True:
             meta = fb2.get_fb2_info(tmp_file_path, original_file_extension)
+        if ".ZIP" == original_file_extension.upper():
+            original_file_extension = '.cbz'
+            original_file_name = os.path.splitext(original_file_name)[0] + original_file_extension
+            log.info(tmp_file_path)
+        if ".TAR" == original_file_extension.upper():
+            original_file_extension = '.cbt'
+            original_file_name = os.path.splitext(original_file_name)[0] + original_file_extension
         if original_file_extension.upper() in ['.CBZ', '.CBT']:
             meta = comic.get_comic_info(tmp_file_path, original_file_name, original_file_extension)
 
