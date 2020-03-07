@@ -1,0 +1,9 @@
+ADDED:
+	+ Fixed cover image extraction with comics
+	+ Added support for PNG cover images for comics
+	+ Added metadata scraping from KomiDL download files (from --tags)
+	+ Added support for ZIP and TAR files (automatically convert to CBZ and CBT)
+
+TODO:
+	+ Support the calibre-web's ' & ' delimeter for multiple authors when retrieving info from KomiDL metadata
+
